@@ -1,0 +1,37 @@
+app = 'wewe-rss'
+primary_region = 'sin'
+
+[build]
+  dockerfile = 'Dockerfile'
+  target = 'app'
+
+[env]
+  NODE_ENV = 'production'
+  HOST = '0.0.0.0'
+  PORT = '4000'
+
+[http_service]
+  internal_port = 4000
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[http_service.checks]]
+  interval = '15s'
+  timeout = '5s'
+  grace_period = '10s'
+  method = 'GET'
+  path = '/'
+
+[[vm]]
+  size = 'shared-cpu-1x'
+  memory = '256mb'
+
+# PostgreSQL 数据库（免费）
+[[Postgres]]
+  name = 'wewe-rss-db'
+
+[deploy]
+  release_command = 'npx prisma migrate deploy'
